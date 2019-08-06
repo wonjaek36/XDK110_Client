@@ -1,6 +1,6 @@
 /*
-* Licensee agrees that the example code provided to Licensee has been developed and released by Bosch solely as an example to be used as a potential reference for Licensee?s application development.
-* Fitness and suitability of the example code for any use within Licensee?s applications need to be verified by Licensee on its own authority by taking appropriate state of the art actions and measures (e.g. by means of quality assurance measures).
+* Licensee agrees that the example code provided to Licensee has been developed and released by Bosch solely as an example to be used as a potential reference for Licensee�s application development.
+* Fitness and suitability of the example code for any use within Licensee�s applications need to be verified by Licensee on its own authority by taking appropriate state of the art actions and measures (e.g. by means of quality assurance measures).
 * Licensee shall be responsible for conducting the development of its applications as well as integration of parts of the example code into such applications, taking into account the state of the art of technology and any statutory regulations and provisions applicable for such applications. Compliance with the functional system requirements and testing there of (including validation of information/data security aspects and functional safety) and release shall be solely incumbent upon Licensee. 
 * For the avoidance of doubt, Licensee shall be responsible and fully liable for the applications and any distribution of such applications into the market.
 * 
@@ -37,13 +37,16 @@
 /**
  * @ingroup APPS_LIST
  *
- * @defgroup XDK_APPLICATION_TEMPLATE TCPClient
+ * @defgroup SEND_DATA_OVER_UDP UdpExample
  * @{
  *
- * @brief XDK Application Template
+ * @brief Send Data Over UDP
  *
- * @details XDK Application Template without any functionality.
- * Could be used as a starting point to develop new application based on XDK platform.
+ * @details This module is intended to send UDP data to a server.
+ * Here the device connects to an access point and obtains an IP address via DHCP.
+ * Thereafter it triggers a task for sending data every pre-defined time interval (#APP_UDP_TX_DELAY) ,
+ * and sends it over WIFI as a UDP broadcast to a pre-defined server listening on
+ * a pre-defined port.
  *
  * @file
  **/
@@ -55,31 +58,33 @@
 #define BCDS_MODULE_ID XDK_APP_MODULE_ID_APP_CONTROLLER
 
 /* own header files */
+#include "XDK_UDP.h"
 #include "AppController.h"
 
 /* system header files */
 #include <stdio.h>
 
 /* additional interface header files */
+#include "XDK_WLAN.h"
 #include "BCDS_CmdProcessor.h"
 #include "FreeRTOS.h"
 #include "task.h"
 
-#include <Serval_Policy.h>
-#include <Serval_Defines.h>
-#include <Serval_Ip.h>
-#include <Serval_Msg.h>
-#include <BCDS_ServalPalWiFi.h>
-
-//#include <unistd.h>
-#include <string.h>
-
-#define PORT 6080
-
-
 /* constant definitions ***************************************************** */
 
+#define APP_CONTROLLER_TX_BUFFER_SIZE        UINT8_C(4)
+
 /* local variables ********************************************************** */
+static WLAN_Setup_T WLANSetupInfo =
+        {
+                .IsEnterprise = false,
+                .IsHostPgmEnabled = false,
+                .SSID = "Z1-207-2.4G",
+                .Password = "Hongik-apl",
+                .IsStatic = false
+        };/**< WLAN setup parameters */
+
+static uint8_t AppControllerTxBuffer[APP_CONTROLLER_TX_BUFFER_SIZE];/**< This buffer holds the data to be sent to server via UDP */
 
 static CmdProcessor_T * AppCmdProcessor;/**< Handle to store the main Command processor handle to be used by run-time event driven threads */
 
@@ -92,42 +97,81 @@ static xTaskHandle AppControllerHandle = NULL;/**< OS thread handle for Applicat
 /* local functions ********************************************************** */
 
 /**
- * @brief Responsible for controlling application control flow.
- * Any application logic which is blocking in nature or fixed time dependent
- * can be placed here.
+ * @brief Responsible for controlling the UDP Example application control flow.
+ *
+ * -Creates a socket for communication
+ * -Sends the data to the remote server.
+ * -Closes the socket after successful communication.
  *
  * @param[in] pvParameters
- * FreeRTOS task handle. Could be used if more than one thread is using this function block.
+ * Unused
  */
 static void AppControllerFire(void* pvParameters)
 {
     BCDS_UNUSED(pvParameters);
 
-    /* A function that implements a task must not exit or attempt to return to
-     its caller function as there is nothing to return to. */
+    Retcode_T retcode = RETCODE_OK;
+    int16_t handle = 0;
+    memset (AppControllerTxBuffer, 0x00, sizeof(AppControllerTxBuffer));
+    char ip_address[20];
+    retcode = WLAN_ConvertIPAddressToString(1325443264, ip_address);
+    if(retcode == RETCODE_OK) {
+    	printf("Server ip is: %s\n", ip_address);
+    } else {
+    	printf("Fail to Convert IP Address To String");
+    	assert(0);
+    }
+
     while (1)
     {
-        /* code to implement application control flow */
-        ;
+        retcode = UDP_Open(&handle);
+        if (retcode == RETCODE_OK)
+        {
+            retcode = UDP_Send(handle, 1325443264, 6666, &AppControllerTxBuffer[0], sizeof(AppControllerTxBuffer));
+        }
+        if (retcode == RETCODE_OK)
+        {
+            printf("UDP sending successful\r\n");
+            AppControllerTxBuffer[0] += 1;
+        }
+        else
+        {
+            Retcode_RaiseError(retcode);
+        }
+        retcode = UDP_Close(handle);
+        if (retcode == RETCODE_OK)
+        {
+            printf("UDP close successful\r\n");
+        }
+        else
+        {
+            Retcode_RaiseError(retcode);
+        }
+        vTaskDelay(pdMS_TO_TICKS(APP_UDP_TX_DELAY));
     }
 }
 
 /**
  * @brief To enable the necessary modules for the application
+ * - WLAN
+ * - UDP
  *
- * @param [in] param1
- * A generic pointer to any context data structure which will be passed to the function when it is invoked by the command processor.
+ * @param[in] param1
+ * Unused
  *
- * @param [in] param2
- * A generic 32 bit value  which will be passed to the function when it is invoked by the command processor..
+ * @param[in] param2
+ * Unused
  */
 static void AppControllerEnable(void * param1, uint32_t param2)
 {
     BCDS_UNUSED(param1);
     BCDS_UNUSED(param2);
-    Retcode_T retcode = RETCODE_OK;
 
-    /* @todo - Enable necessary modules for the application and check their return values */
+    Retcode_T retcode = WLAN_Enable();
+    if (RETCODE_OK == retcode)
+    {
+        retcode = UDP_Enable();
+    }
     if (RETCODE_OK == retcode)
     {
         if (pdPASS != xTaskCreate(AppControllerFire, (const char * const ) "AppController", TASK_STACK_SIZE_APP_CONTROLLER, NULL, TASK_PRIO_APP_CONTROLLER, &AppControllerHandle))
@@ -145,22 +189,28 @@ static void AppControllerEnable(void * param1, uint32_t param2)
 
 /**
  * @brief To setup the necessary modules for the application
+ * - WLAN
+ * - UDP
  *
- * @param [in] param1
- * A generic pointer to any context data structure which will be passed to the function when it is invoked by the command processor.
+ * @param[in] param1
+ * Unused
  *
- * @param [in] param2
- * A generic 32 bit value  which will be passed to the function when it is invoked by the command processor..
+ * @param[in] param2
+ * Unused
  */
 static void AppControllerSetup(void * param1, uint32_t param2)
 {
     BCDS_UNUSED(param1);
     BCDS_UNUSED(param2);
-    Retcode_T retcode = RETCODE_OK;
-
-    /* @todo - Setup the necessary modules required for the application */
-
-    retcode = CmdProcessor_Enqueue(AppCmdProcessor, AppControllerEnable, NULL, UINT32_C(0));
+    Retcode_T retcode = WLAN_Setup(&WLANSetupInfo);
+    if (RETCODE_OK == retcode)
+    {
+        retcode = UDP_Setup(UDP_SETUP_USE_CC31XX_LAYER);
+    }
+    if (RETCODE_OK == retcode)
+    {
+        retcode = CmdProcessor_Enqueue(AppCmdProcessor, AppControllerEnable, NULL, UINT32_C(0));
+    }
     if (RETCODE_OK != retcode)
     {
         printf("AppControllerSetup : Failed \r\n");
@@ -194,8 +244,6 @@ void AppController_Init(void * cmdProcessorHandle, uint32_t param2)
         Retcode_RaiseError(retcode);
         assert(0); /* To provide LED indication for the user */
     }
-    //callModuleInitialization();
-
 }
 
 /**@} */

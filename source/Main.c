@@ -62,6 +62,7 @@ static CmdProcessor_T MainCmdProcessor;
 
 int main(void)
 {
+    /* Mapping Default Error Handling function */
     Retcode_T retcode = Retcode_Initialize(DefaultErrorHandlingFunc);
     if (RETCODE_OK == retcode)
     {
@@ -73,11 +74,17 @@ int main(void)
     }
     if (RETCODE_OK == retcode)
     {
+        /* Here we enqueue the application initialization into the command
+         * processor, such that the initialization function will be invoked
+         * once the RTOS scheduler is started below.
+         */
         retcode = CmdProcessor_Enqueue(&MainCmdProcessor, AppController_Init, &MainCmdProcessor, UINT32_C(0));
     }
     if (RETCODE_OK == retcode)
     {
+        /* start scheduler */
         vTaskStartScheduler();
+        /* Code must not reach here since the OS must take control. If not, we will assert. */
     }
     else
     {
