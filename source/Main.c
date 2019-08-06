@@ -1,6 +1,6 @@
 /*
-* Licensee agrees that the example code provided to Licensee has been developed and released by Bosch solely as an example to be used as a potential reference for Licensee’s application development. 
-* Fitness and suitability of the example code for any use within Licensee’s applications need to be verified by Licensee on its own authority by taking appropriate state of the art actions and measures (e.g. by means of quality assurance measures).
+* Licensee agrees that the example code provided to Licensee has been developed and released by Bosch solely as an example to be used as a potential reference for Licenseeï¿½s application development. 
+* Fitness and suitability of the example code for any use within Licenseeï¿½s applications need to be verified by Licensee on its own authority by taking appropriate state of the art actions and measures (e.g. by means of quality assurance measures).
 * Licensee shall be responsible for conducting the development of its applications as well as integration of parts of the example code into such applications, taking into account the state of the art of technology and any statutory regulations and provisions applicable for such applications. Compliance with the functional system requirements and testing there of (including validation of information/data security aspects and functional safety) and release shall be solely incumbent upon Licensee. 
 * For the avoidance of doubt, Licensee shall be responsible and fully liable for the applications and any distribution of such applications into the market.
 * 
@@ -62,7 +62,6 @@ static CmdProcessor_T MainCmdProcessor;
 
 int main(void)
 {
-    /* Mapping Default Error Handling function */
     Retcode_T retcode = Retcode_Initialize(DefaultErrorHandlingFunc);
     if (RETCODE_OK == retcode)
     {
@@ -74,17 +73,11 @@ int main(void)
     }
     if (RETCODE_OK == retcode)
     {
-        /* Here we enqueue the application initialization into the command
-         * processor, such that the initialization function will be invoked
-         * once the RTOS scheduler is started below.
-         */
         retcode = CmdProcessor_Enqueue(&MainCmdProcessor, AppController_Init, &MainCmdProcessor, UINT32_C(0));
     }
     if (RETCODE_OK == retcode)
     {
-        /* start scheduler */
         vTaskStartScheduler();
-        /* Code must not reach here since the OS must take control. If not, we will assert. */
     }
     else
     {
