@@ -1,4 +1,3 @@
-
 #ifndef JSON_H_
 #define JSON_H_
 
@@ -10,8 +9,8 @@ typedef struct Element_S
 	char* value;
 } Element_T;
 
-char* createJson(char* json, int args, ...);
+int createJson(char** json, char** sensors, int numOfSensors);
 
-#define MAX_ELEMENT_LENGTH 100
+#define MAX_ELEMENT_LENGTH 50
 
 #endif /* JSON_H_ */

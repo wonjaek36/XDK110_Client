@@ -33,27 +33,27 @@
 
 /* local type and macro definitions */
 
-#warning Please configure your WLAN below and remove this line.
+//#warning Please configure your WLAN below and remove this line.
 
 /**
  * WLAN_CONNECT_WPA_SSID is the SSID of the WIFI network you want to connect to.
  */
-#define WLAN_SSID                        "YourWifiNetwork"
+#define WLAN_SSID                        "Z1-207-2.4G"
 /**
  * WLAN_CONNECT_WPA_PASS is the WPA/WPA2 passphrase (pre-shared key) of your WIFI network.
  */
-#define WLAN_PSK                         "YourWifiPassword"
+#define WLAN_PSK                         "Hongik-apl"
 
 /**
  * DEST_SERVER_IP is the destination server IP address of the web server we will send UDP payloads.
  * If you want to test this example without setting up your own server, you can use publicly available services.
  */
-#define DEST_SERVER_IP                  XDK_NETWORK_IPV4(0, 0, 0, 0)
+#define DEST_SERVER_IP                  XDK_NETWORK_IPV4(192, 168, 0, 79)
 
 /**
  * DEST_SERVER_PORT is the UDP port to which we will send UDP payloads.
  */
-#define DEST_SERVER_PORT                UINT16_C(0)
+#define DEST_SERVER_PORT                UINT16_C(6666)
 
 /**
  * APP_UDP_TX_DELAY is the UDP packet transmit frequency in milli second.
