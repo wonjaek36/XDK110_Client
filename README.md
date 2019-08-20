@@ -1,12 +1,12 @@
 #XDK110_Client
 
 
-###Introduction
+##Introduction
 
 XDK 110 inclusive of multiple micro electromechanical systems sensors, various parameters for condition monitoring or predictive maintenance get recorded.
 This code is client side of collecting data via 8 sensors through UDP from XDK 110 .
 
-Sensor settings :
+###*Sensor settings :*
 
 ####1.Accelerometer:
    #Type:collecting X , Y and Z axis values
@@ -58,7 +58,7 @@ Sensor settings :
    #Unit: °C
 
 
-###Configuration
+##Configuration
 
 Install xdk workbench v.3.4 
 Import code
@@ -66,7 +66,7 @@ Connect sensor to computer via USB
 Clean>>Build>>Flash 
 
 
-###Environment
+##Environment
 
 -XDK Workbench 3.4.0
 
