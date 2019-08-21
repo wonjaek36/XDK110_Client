@@ -21,21 +21,21 @@ This code is client side of collecting data via 8 sensors through UDP from XDK 1
 #### Sensor APIs :
 
 >###### 1.Accelerometer ( BMA280 ):
-   Type:collecting X , Y and Z axis values and shows the rate of change of the speed and velocity of an object.<br />
+   Type:Collecting X , Y and Z axis values and shows the rate of change of the speed and velocity of an object.<br />
    Range: -2 ~ +2 g (programmable : mutable range )<br />
    Rate: 2000 Hz<br />
    Unit: g (G-forced = g )<br />
 
 
 >###### 2.Magnetometer ( BMM150 ):
-   Type:magnetometer is a triple-axis smart digital magnetometer that detects the strength and direction of a magnetic field and communicates    the x, y and z components directly to the server.Magnetometer API returns the sensor values in the unit µT, which is equivalent to µVs/m2.    <br />
+   Type:Magnetometer is a triple-axis smart digital magnetometer that detects the strength and direction of a magnetic field and communicates    the x, y and z components directly to the server.Magnetometer API returns the sensor values in the unit µT, which is equivalent to µVs/m2.    <br />
    Range: ±1300 μT (X,Y-Axis); ±2500μT (Z-Axis)<br />
    Rate: 300 Hz<br />
    Unit: μT (micro Tesla)<br />
 
 
 >###### 3.Gyroscope ( BMG160 ):
-   Type:collecting data via 3-axis gyroscope sensor.Gyroscope sensor senses angular velocity. In simple terms, angular velocity is the            change in rotational angle per unit of time(degrees-per-second)<br />
+   Type:Collecting data via 3-axis gyroscope sensor.Gyroscope sensor senses angular velocity. In simple terms, angular velocity is the            change in rotational angle per unit of time(degrees-per-second)<br />
    Range: ±125 º/s ~ ±2000 º/s (programmable  : mutable range)<br />
    Rate: 2000 Hz<br /> 
    Unit: deg/s (degrees-per-second)<br />
