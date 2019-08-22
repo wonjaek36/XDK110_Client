@@ -19,11 +19,12 @@ This code is client side of collecting data via 8 sensors through UDP from XDK 1
  
 
 #### Sensor APIs :
+**NOTE:** *Rate means the speed at which sensor changes*
 
 >###### 1.Accelerometer ( BMA280 ):
    Type:Collecting X , Y and Z axis values and shows the rate of change of the speed and velocity of an object.<br />
    Range: -2 ~ +2 g (programmable : mutable range )<br />
-   Rate: 2000 Hz<br />
+   Rate: 2000 Hz <br />
    Unit: g (G-forced = g )<br />
 
 
