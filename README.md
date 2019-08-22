@@ -87,6 +87,7 @@ Clean>>Build>>Flash<br />
 ##Environment
 
 -XDK Workbench 3.4.0
+[Download](http://xdk.bosch-connectivity.com/home?p_p_id=101&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_101_struts_action=%2Fasset_publisher%2Fview_content&_101_assetEntryId=377280&_101_type=content&_101_urlTitle=workbench-3-4-0&inheritRedirect=false/)
 
 
 
